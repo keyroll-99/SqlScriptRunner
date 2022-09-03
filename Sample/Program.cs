@@ -5,9 +5,9 @@ using SqlRunner.models;
 
 var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
 {
-    ConnectionString = "erver=127.0.0.1;Port=5432;Database=test;User Id=admin;Password=passwd;",
-    FolderPath = "/home/keyroll/dev/tests/sqlScript",
-    DataBaseType = DataBaseTypeEnum.Postgresql
+    ConnectionString = "Server=127.0.0.1;Port=3307;Database=example;Uid=root;Password=password123;",
+    FolderPath = "/home/keyroll/dev/tests/mysqlScript",
+    DataBaseType = DataBaseTypeEnum.MySql
 });
 
 scriptRunner.RunDeploy();

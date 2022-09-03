@@ -7,22 +7,9 @@ public class PostgresScriptRunner : ScriptRunner
 {
     private readonly NpgsqlConnection _connection;
 
-    /// <summary>
-    /// default constructor
-    /// </summary>
-    /// <param name="setupModel"></param>
-    public PostgresScriptRunner(SetupModel setupModel): this(setupModel, new PostgresConnectorFactory())
+    public PostgresScriptRunner(SetupModel setupModel): base(setupModel)
     {
-    }
-    
-    /// <summary>
-    /// this constructor should be use only for tests
-    /// </summary>
-    /// <param name="setupModel"></param>
-    /// <param name="factory"></param>
-    public PostgresScriptRunner(SetupModel setupModel, PostgresConnectorFactory factory): base(setupModel)
-    {
-        _connection = factory.CreateNpqsqlConnection(setupModel.ConnectionString);
+        _connection = new NpgsqlConnection(setupModel.ConnectionString);
     }
 
 

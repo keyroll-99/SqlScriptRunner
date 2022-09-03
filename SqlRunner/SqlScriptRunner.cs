@@ -1,4 +1,5 @@
 using SqlRunner.models;
+using SqlRunner.mysql;
 using SqlRunner.postgresql;
 
 namespace SqlRunner;
@@ -11,7 +12,7 @@ public class SqlScriptRunner
         {
             DataBaseTypeEnum.Postgresql => new PostgresScriptRunner(setupModel),
             DataBaseTypeEnum.Mssql => throw new NotImplementedException(),
-            DataBaseTypeEnum.MySql => throw new NotImplementedException(),
+            DataBaseTypeEnum.MySql => new MysqlScriptRunner(setupModel),
             _ => throw new ArgumentException($"Invalid argument {nameof(setupModel)}")
         };
     }
