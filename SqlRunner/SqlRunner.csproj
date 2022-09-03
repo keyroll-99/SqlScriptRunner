@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>SqlScriptRunner</PackageId>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>SqlScriptRunner</Title>
+        <Authors>Karol Kaźmierczak</Authors>
+        <PackageLicenseUrl>MIT</PackageLicenseUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Npgsql" Version="6.0.6" />
+    </ItemGroup>
+
+</Project>
