@@ -17,7 +17,7 @@ var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
     ConnectionString = "Server=localhost; Database=tests; User Id=sa; Password=pa55w0rd!;TrustServerCertificate=true",
     FolderPath = "/mssql/scripts",
     DataBaseType = DataBaseTypeEnum.Mssql
-});
+}).RunDeploy();
 ```
 
 This example will be run all scripts (*.sql file) from folder `/mssql/scripts` folder and subfolders
