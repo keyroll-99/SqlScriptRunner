@@ -5,9 +5,9 @@ using SqlRunner.models;
 
 var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
 {
-    ConnectionString = "Server=127.0.0.1;Port=3307;Database=example;Uid=root;Password=password123;",
-    FolderPath = "/home/keyroll/dev/tests/mysqlScript",
-    DataBaseType = DataBaseTypeEnum.MySql
+    ConnectionString = "Server=localhost; Database=tests; User Id=sa; Password=pa55w0rd!;TrustServerCertificate=true",
+    FolderPath = "/home/keyroll/dev/tests/mssql",
+    DataBaseType = DataBaseTypeEnum.Mssql
 });
 
 scriptRunner.RunDeploy();

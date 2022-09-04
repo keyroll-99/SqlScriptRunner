@@ -1,17 +1,18 @@
 using SqlRunner.models;
+using SqlRunner.mssql;
 using SqlRunner.mysql;
 using SqlRunner.postgresql;
 
 namespace SqlRunner;
 
-public class SqlScriptRunner
+public static class SqlScriptRunner
 {
-    public static ScriptRunner? GetScriptRunner(SetupModel setupModel)
+    public static ScriptRunner GetScriptRunner(SetupModel setupModel)
     {
         return setupModel.DataBaseType switch
         {
             DataBaseTypeEnum.Postgresql => new PostgresScriptRunner(setupModel),
-            DataBaseTypeEnum.Mssql => throw new NotImplementedException(),
+            DataBaseTypeEnum.Mssql => new MssqlScriptRunner(setupModel),
             DataBaseTypeEnum.MySql => new MysqlScriptRunner(setupModel),
             _ => throw new ArgumentException($"Invalid argument {nameof(setupModel)}")
         };

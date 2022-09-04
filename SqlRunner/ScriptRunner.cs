@@ -32,6 +32,12 @@ public abstract class ScriptRunner : IDisposable
         }
     }
 
+    public void Dispose()
+    {
+        var task = CloseConnectionAsync();
+        task.Wait();
+    }
+
     #region abstract
 
     protected abstract Task InitConnectionAsync();
@@ -52,6 +58,21 @@ public abstract class ScriptRunner : IDisposable
         }
 
         SetupModel = setupModel;
+    }
+    
+    protected static string GetFileContent(string filePath)
+    {
+        return File.ReadAllText(filePath);
+    }
+
+    protected static string GetPath(string pathToFile)
+    {
+        return pathToFile[..pathToFile.LastIndexOf(Path.DirectorySeparatorChar)];
+    }
+
+    protected static string GetFileName(string pathToFile)
+    {
+        return pathToFile.Split(Path.DirectorySeparatorChar).Last();
     }
 
     private async Task ExecuteScripts()
@@ -108,26 +129,5 @@ public abstract class ScriptRunner : IDisposable
             .ToList();
 
         return result;
-    }
-
-    protected static string GetFileContent(string filePath)
-    {
-        return File.ReadAllText(filePath);
-    }
-
-    protected static string GetPath(string pathToFile)
-    {
-        return pathToFile[..pathToFile.LastIndexOf(Path.DirectorySeparatorChar)];
-    }
-
-    protected static string GetFileName(string pathToFile)
-    {
-        return pathToFile.Split(Path.DirectorySeparatorChar).Last();
-    }
-
-    public void Dispose()
-    {
-        var task = CloseConnectionAsync();
-        task.Wait();
     }
 }
