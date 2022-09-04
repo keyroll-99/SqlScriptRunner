@@ -19,11 +19,16 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: publish on version change
-      id: publish_nuget
-      uses: brandedoutcast/publish-nuget@v2
-      with:
-        # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: SqlRunner/SqlRunner.csproj
-        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-        PACKAGE_NAME: SqlScriptRunner
+    - name: Package
+      run: dotnet pack -c Release -o . SqlRunner/SqlRunner.csproj
+    - name: Publish
+      run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+    # - name: publish on version change
+    #   id: publish_nuget
+    #   uses: brandedoutcast/publish-nuget@v2
+    #   with:
+    #     # Filepath of the project to be packaged, relative to root of repository
+    #     PROJECT_FILE_PATH: SqlRunner/SqlRunner.csproj
+    #     NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+    #     PACKAGE_NAME: SqlScriptRunner
+    #     BUILD_CONFIGURATION: Release
