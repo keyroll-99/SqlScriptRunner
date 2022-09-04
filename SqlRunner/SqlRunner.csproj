@@ -5,10 +5,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>SqlScriptRunner</PackageId>
-        <PackageVersion>0.0.1</PackageVersion>
+        <PackageVersion>0.1.0</PackageVersion>
         <Title>SqlScriptRunner</Title>
         <Authors>Karol Kaźmierczak</Authors>
         <PackageLicenseUrl>MIT</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/kaaziuu/SqlScriptRunner</RepositoryUrl>
+        <PackageTags>sql-runner script-runner database first</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
