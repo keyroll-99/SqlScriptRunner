@@ -1,8 +1,7 @@
-name: .NET
+name: publish nuget
 
-on:
-  push:
-    branches: [ "master" ]
+on: [workflow_dispatch]
+
 
 jobs:
   build:
@@ -15,6 +14,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -22,13 +23,4 @@ jobs:
     - name: Package
       run: dotnet pack -c Release -o . SqlRunner/SqlRunner.csproj
     - name: Publish
-      run: dotnet nuget push *.nupkg -k ${{ secrets.UGET_API_KEY }} -s https://api.nuget.org/v3/index.json
-    # - name: publish on version change
-    #   id: publish_nuget
-    #   uses: brandedoutcast/publish-nuget@v2
-    #   with:
-    #     # Filepath of the project to be packaged, relative to root of repository
-    #     PROJECT_FILE_PATH: SqlRunner/SqlRunner.csproj
-    #     NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-    #     PACKAGE_NAME: SqlScriptRunner
-    #     BUILD_CONFIGURATION: Release
+      run: dotnet nuget push *.nupkg -s 'https://api.nuget.org/v3/index.json' -k ${{ secrets.NUGET_API_KEY }}  --skip-duplicate 
