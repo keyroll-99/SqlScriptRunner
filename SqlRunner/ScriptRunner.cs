@@ -62,7 +62,13 @@ public abstract class ScriptRunner : IDisposable
     
     protected static string GetFileContent(string filePath)
     {
-        return File.ReadAllText(filePath);
+        var fileContent = File.ReadAllText(filePath);
+        if (fileContent.Length == 0)
+        {
+            throw new ApplicationException("invalid file content lenght");
+        }
+
+        return fileContent;
     }
 
     protected static string GetPath(string pathToFile)
