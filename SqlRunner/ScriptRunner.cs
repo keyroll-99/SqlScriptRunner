@@ -6,6 +6,8 @@ public abstract class ScriptRunner : IDisposable
 {
     protected readonly SetupModel SetupModel;
 
+    #region public
+    
     public void RunDeploy()
     {
         var task = RunDeployAsync();
@@ -38,6 +40,8 @@ public abstract class ScriptRunner : IDisposable
         task.Wait();
     }
 
+    #endregion
+
     #region abstract
 
     protected abstract Task InitConnectionAsync();
@@ -60,6 +64,16 @@ public abstract class ScriptRunner : IDisposable
         SetupModel = setupModel;
     }
     
+    internal async Task RunInitScripts()
+    {
+        if (SetupModel.InitFolderPath is null)
+        {
+            return;
+        }
+        await TryExecuteInitScript();
+    }
+
+
     protected static string GetFileContent(string filePath)
     {
         var fileContent = File.ReadAllText(filePath);
@@ -81,13 +95,73 @@ public abstract class ScriptRunner : IDisposable
         return pathToFile.Split(Path.DirectorySeparatorChar).Last();
     }
 
+    private async Task TryExecuteInitScript()
+    {
+        try
+        {
+            await InitConnectionAsync();
+            if (await IsDeployScriptTableExistsAsync())
+            {
+                await ExecuteScripts(SetupModel.InitFolderPath, false);
+            }
+            else
+            {
+                var intiScripts = GetInitScript();
+                await ExecuteScriptsWithoutSaveLog(intiScripts);
+                await SaveLogsAboutInitScript(intiScripts);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+
+            throw;
+        }
+        finally
+        {
+            await CloseConnectionAsync();
+        }
+    }
+
+    private List<string> GetInitScript()
+    {
+        return Directory.EnumerateFiles(SetupModel.InitFolderPath!, "*.sql").ToList();
+    }
+    
+    private async Task ExecuteScriptsWithoutSaveLog(List<string> sqlFiles)
+    {
+        foreach (var filePath in sqlFiles)
+        {
+            await RunScriptAsync(filePath);
+        }
+    }
+
+    private async Task SaveLogsAboutInitScript(List<string> sqlFiles)
+    {
+        await CreateDeployScriptTable();
+        foreach (var filePath in sqlFiles)
+        {
+            await SaveLogAboutScriptRun(filePath);
+        }
+    }
+
     private async Task ExecuteScripts()
     {
+        await ExecuteScripts(SetupModel.FolderPath);
+    }
+
+    private async Task ExecuteScripts(string startPath, bool avoidInitFolder = true)
+    {
         var directionToExecute = new Queue<string>();
-        directionToExecute.Enqueue(SetupModel.FolderPath);
+        directionToExecute.Enqueue(startPath);
 
         while (directionToExecute.TryDequeue(out var directionPath))
         {
+            if (avoidInitFolder && directionPath == SetupModel.InitFolderPath)
+            {
+                continue;
+            }
+
             UpdateQueue(ref directionToExecute, directionPath);
 
             if (IsFolderDisabled(directionPath)) continue;

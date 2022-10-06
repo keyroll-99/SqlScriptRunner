@@ -9,6 +9,22 @@ public static class SqlScriptRunner
 {
     public static ScriptRunner GetScriptRunner(SetupModel setupModel)
     {
+        var scriptRunner = CreateScriptRunner(setupModel);
+        try
+        {
+            scriptRunner.RunInitScripts().Wait();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+
+        return scriptRunner;
+    }
+
+
+    private static ScriptRunner CreateScriptRunner(SetupModel setupModel)
+    {
         return setupModel.DataBaseType switch
         {
             DataBaseTypeEnum.Postgresql => new PostgresScriptRunner(setupModel),

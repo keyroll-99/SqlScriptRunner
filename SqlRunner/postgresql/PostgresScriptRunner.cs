@@ -10,6 +10,7 @@ public class PostgresScriptRunner : ScriptRunner
     public PostgresScriptRunner(SetupModel setupModel) : base(setupModel)
     {
         _connection = new NpgsqlConnection(setupModel.ConnectionString);
+
     }
 
     protected override async Task InitConnectionAsync()

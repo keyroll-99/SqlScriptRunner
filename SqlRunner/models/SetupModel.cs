@@ -18,6 +18,11 @@ public class SetupModel
     /// Typeof database
     /// </summary>
     public DataBaseTypeEnum DataBaseType { get; init; }
+    
+    /// <summary>
+    /// Path to folder with init scripts (like create database or create schema)
+    /// </summary>
+    public string? InitFolderPath { get; init; }
 
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(ConnectionString)
