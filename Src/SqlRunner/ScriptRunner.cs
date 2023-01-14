@@ -1,8 +1,10 @@
+using SqlRunner.exceptions;
 using SqlRunner.models;
+using SqlRunner.valueObjects;
 
 namespace SqlRunner;
 
-public abstract class ScriptRunner : IDisposable
+public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 {
     protected readonly SetupModel SetupModel;
 
@@ -36,9 +38,10 @@ public abstract class ScriptRunner : IDisposable
 
     public void Dispose()
     {
-        var task = CloseConnectionAsync();
-        task.Wait();
+        DisposeAsync().AsTask().Wait();
     }
+
+    public async ValueTask DisposeAsync() => await CloseConnectionAsync();
 
     #endregion
 
@@ -48,23 +51,13 @@ public abstract class ScriptRunner : IDisposable
     protected abstract Task CloseConnectionAsync();
     protected abstract Task<bool> IsDeployScriptTableExistsAsync();
     protected abstract Task CreateDeployScriptTable();
-    protected abstract Task SaveLogAboutScriptRun(string filePath);
-    protected abstract Task RunScriptAsync(string filePath);
-    protected abstract Task<List<DeployScript>> GetExecutedFile(string path);
+    protected abstract Task SaveLogAboutScriptRun(Query query);
+    protected abstract Task RunScriptAsync(Query query);
+    protected abstract Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch);
 
     #endregion
-
-    protected ScriptRunner(SetupModel setupModel)
-    {
-        if (!setupModel.IsValid)
-        {
-            throw new ArgumentException(typeof(SetupModel).ToString());
-        }
-
-        SetupModel = setupModel;
-    }
     
-    internal async Task RunInitScripts()
+    internal async Task RunInitScriptsIfNotNull()
     {
         if (SetupModel.InitFolderPath is null)
         {
@@ -73,26 +66,10 @@ public abstract class ScriptRunner : IDisposable
         await TryExecuteInitScript();
     }
 
-
-    protected static string GetFileContent(string filePath)
+    protected ScriptRunner(SetupModel setupModel)
     {
-        var fileContent = File.ReadAllText(filePath);
-        if (fileContent.Length == 0)
-        {
-            throw new ApplicationException("invalid file content lenght");
-        }
-
-        return fileContent;
-    }
-
-    protected static string GetPath(string pathToFile)
-    {
-        return pathToFile[..pathToFile.LastIndexOf(Path.DirectorySeparatorChar)];
-    }
-
-    protected static string GetFileName(string pathToFile)
-    {
-        return pathToFile.Split(Path.DirectorySeparatorChar).Last();
+        InvalidSetupModelException.ThrowIfInvalid(setupModel);
+        SetupModel = setupModel;
     }
 
     private async Task TryExecuteInitScript()
@@ -102,11 +79,11 @@ public abstract class ScriptRunner : IDisposable
             await InitConnectionAsync();
             if (await IsDeployScriptTableExistsAsync())
             {
-                await ExecuteScripts(SetupModel.InitFolderPath, false);
+                await ExecuteScripts(SetupModel.InitFolderPath!, false);
             }
             else
             {
-                var intiScripts = GetInitScript();
+                var intiScripts = GetInitScript().Select(x => new Query(x)).ToList();
                 await ExecuteScriptsWithoutSaveLog(intiScripts);
                 await SaveLogsAboutInitScript(intiScripts);
             }
@@ -114,7 +91,6 @@ public abstract class ScriptRunner : IDisposable
         catch (Exception e)
         {
             Console.WriteLine(e);
-
             throw;
         }
         finally
@@ -123,25 +99,25 @@ public abstract class ScriptRunner : IDisposable
         }
     }
 
-    private List<string> GetInitScript()
+    private IEnumerable<string> GetInitScript()
     {
-        return Directory.EnumerateFiles(SetupModel.InitFolderPath!, "*.sql").ToList();
+        return Directory.EnumerateFiles(SetupModel.InitFolderPath!, "*.sql");
     }
     
-    private async Task ExecuteScriptsWithoutSaveLog(List<string> sqlFiles)
+    private async Task ExecuteScriptsWithoutSaveLog(IEnumerable<Query> queries)
     {
-        foreach (var filePath in sqlFiles)
+        foreach (var query in queries)
         {
-            await RunScriptAsync(filePath);
+            await RunScriptAsync(query);
         }
     }
 
-    private async Task SaveLogsAboutInitScript(List<string> sqlFiles)
+    private async Task SaveLogsAboutInitScript(IEnumerable<Query> queries)
     {
         await CreateDeployScriptTable();
-        foreach (var filePath in sqlFiles)
+        foreach (var query in queries)
         {
-            await SaveLogAboutScriptRun(filePath);
+            await SaveLogAboutScriptRun(query);
         }
     }
 
@@ -150,9 +126,9 @@ public abstract class ScriptRunner : IDisposable
         await ExecuteScripts(SetupModel.FolderPath);
     }
 
-    private async Task ExecuteScripts(string startPath, bool avoidInitFolder = true)
+    private async Task ExecuteScripts(FilePatch startPath, bool avoidInitFolder = true)
     {
-        var directionToExecute = new Queue<string>();
+        var directionToExecute = new Queue<FilePatch>();
         directionToExecute.Enqueue(startPath);
 
         while (directionToExecute.TryDequeue(out var directionPath))
@@ -166,19 +142,19 @@ public abstract class ScriptRunner : IDisposable
 
             if (IsFolderDisabled(directionPath)) continue;
 
-            foreach (var filePath in await GetSqlFiles(directionPath))
+            foreach (var query in await GetQueries(directionPath))
             {
-                await TryExecuteScript(filePath);
+                await TryExecuteScript(query);
             }
         }
     }
 
-    private async Task TryExecuteScript(string filePath)
+    private async Task TryExecuteScript(Query query)
     {
         try
         {
-            await RunScriptAsync(filePath);
-            await SaveLogAboutScriptRun(filePath);
+            await RunScriptAsync(query);
+            await SaveLogAboutScriptRun(query);
         }
         catch (Exception e)
         {
@@ -192,7 +168,7 @@ public abstract class ScriptRunner : IDisposable
         return File.Exists($"{path}/disable");
     }
 
-    private static void UpdateQueue(ref Queue<string> queue, string currentDirection)
+    private static void UpdateQueue(ref Queue<FilePatch> queue, FilePatch currentDirection)
     {
         foreach (var subDirectionPath in Directory.GetDirectories(currentDirection))
         {
@@ -200,13 +176,13 @@ public abstract class ScriptRunner : IDisposable
         }
     }
 
-    private async Task<List<string>> GetSqlFiles(string path)
+    private async Task<IEnumerable<Query>> GetQueries(FilePatch path)
     {
         var allFiles = Directory.EnumerateFiles(path, "*.sql").ToList();
         var executedFiles = await GetExecutedFile(path);
         var result = allFiles
             .Where(x => executedFiles.All(y => $"{y.Path}/{y.Name}" != x))
-            .ToList();
+            .Select(x => new Query(x));
 
         return result;
     }

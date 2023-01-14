@@ -7,16 +7,16 @@ namespace SqlRunner;
 
 public static class SqlScriptRunner
 {
-    public static ScriptRunner GetScriptRunner(SetupModel setupModel)
+    public static IScriptRunner GetScriptRunner(SetupModel setupModel)
     {
         var scriptRunner = CreateScriptRunner(setupModel);
         try
         {
-            scriptRunner.RunInitScripts().Wait();
+            scriptRunner.RunInitScriptsIfNotNull().Wait();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            Console.WriteLine(e);
         }
 
         return scriptRunner;

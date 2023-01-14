@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlRunner", "SqlRunner\SqlR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{99AC47B0-3F04-4C4B-827F-1527ACE23741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{69800A30-DB6C-4E08-BA3A-526E66732A14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlRunner", "Src\SqlRunner\SqlRunner.csproj", "{CA6AE4E3-FED2-4F16-BE82-084963FC167D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +24,17 @@ Global
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69800A30-DB6C-4E08-BA3A-526E66732A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69800A30-DB6C-4E08-BA3A-526E66732A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69800A30-DB6C-4E08-BA3A-526E66732A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69800A30-DB6C-4E08-BA3A-526E66732A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA6AE4E3-FED2-4F16-BE82-084963FC167D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA6AE4E3-FED2-4F16-BE82-084963FC167D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA6AE4E3-FED2-4F16-BE82-084963FC167D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA6AE4E3-FED2-4F16-BE82-084963FC167D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A96996D0-6050-4062-A83B-FB55654B45BE} = {99AC47B0-3F04-4C4B-827F-1527ACE23741}
+		{CA6AE4E3-FED2-4F16-BE82-084963FC167D} = {99AC47B0-3F04-4C4B-827F-1527ACE23741}
 	EndGlobalSection
 EndGlobal

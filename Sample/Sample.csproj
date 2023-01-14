@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SqlRunner\SqlRunner.csproj" />
+      <ProjectReference Include="..\Src\SqlRunner\SqlRunner.csproj" />
     </ItemGroup>
 
 </Project>

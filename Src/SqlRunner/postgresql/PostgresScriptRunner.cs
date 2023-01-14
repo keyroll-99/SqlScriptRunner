@@ -1,9 +1,10 @@
 using Npgsql;
 using SqlRunner.models;
+using SqlRunner.valueObjects;
 
 namespace SqlRunner.postgresql;
 
-public class PostgresScriptRunner : ScriptRunner
+internal class PostgresScriptRunner : ScriptRunner
 {
     private readonly NpgsqlConnection _connection;
 
@@ -50,11 +51,8 @@ public class PostgresScriptRunner : ScriptRunner
         await cmd.ExecuteNonQueryAsync();
     }
 
-    protected override async Task SaveLogAboutScriptRun(string filePath)
+    protected override async Task SaveLogAboutScriptRun(Query query)
     {
-        var path = GetPath(filePath);
-        var name = GetFileName(filePath);
-
         await using var command =
             new NpgsqlCommand(
                 $"INSERT INTO \"{SetupModel.DeployScriptsTableName}\" (Path, Name) VALUES (@scriptPath, @scriptName)",
@@ -62,21 +60,20 @@ public class PostgresScriptRunner : ScriptRunner
             {
                 Parameters =
                 {
-                    new NpgsqlParameter("scriptPath", path),
-                    new NpgsqlParameter("scriptName", name)
+                    new NpgsqlParameter("scriptPath", query.FilePatch),
+                    new NpgsqlParameter("scriptName", query.FileName)
                 }
             };
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task RunScriptAsync(string filePath)
+    protected override async Task RunScriptAsync(Query query)
     {
-        var query = GetFileContent(filePath);
-        await using var command = new NpgsqlCommand(query, _connection);
+        await using var command = new NpgsqlCommand(query.QueryContent, _connection);
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task<List<DeployScript>> GetExecutedFile(string path)
+    protected override async Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch)
     {
         var result = new List<DeployScript>();
         var query =
@@ -84,7 +81,7 @@ public class PostgresScriptRunner : ScriptRunner
 
         await using var command = new NpgsqlCommand(query, _connection)
         {
-            Parameters = { new NpgsqlParameter("scriptPath", path) }
+            Parameters = { new NpgsqlParameter("scriptPath", filePatch) }
         };
 
         await using var reader = await command.ExecuteReaderAsync();
