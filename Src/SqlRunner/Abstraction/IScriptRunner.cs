@@ -1,4 +1,4 @@
-﻿namespace SqlRunner;
+﻿namespace SqlRunner.Abstraction;
 
 public interface IScriptRunner
 {

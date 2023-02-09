@@ -1,30 +1,33 @@
 using System.Data;
 using MySqlConnector;
+using SqlRunner.Abstraction;
 using SqlRunner.models;
 using SqlRunner.valueObjects;
 
 namespace SqlRunner.mysql;
 
-internal class MysqlScriptRunner : ScriptRunner
+internal class MysqlScriptRunner : IDatabaseScriptRunner
 {
     private readonly MySqlConnection _connection;
+    private readonly string _deployScriptsTableName;
 
-    public MysqlScriptRunner(SetupModel setupModel) : base(setupModel)
+    public MysqlScriptRunner(string connectionString, string deployScriptsTableName)
     {
-        _connection = new MySqlConnection(setupModel.ConnectionString);
+        _connection = new MySqlConnection(connectionString);
+        _deployScriptsTableName = deployScriptsTableName;
     }
 
-    protected override async Task InitConnectionAsync()
+    public async Task InitConnectionAsync()
     {
         await _connection.OpenAsync();
     }
 
-    protected override async Task CloseConnectionAsync()
+    public async Task CloseConnectionAsync()
     {
         await _connection.CloseAsync();
     }
 
-    protected override async Task<bool> IsDeployScriptTableExistsAsync()
+    public async Task<bool> IsDeployScriptTableExistsAsync()
     {
         const string sql = "SELECT COUNT(*)" +
                            "FROM information_schema.tables " +
@@ -35,7 +38,7 @@ internal class MysqlScriptRunner : ScriptRunner
         {
             Parameters =
             {
-                new MySqlParameter("table", SetupModel.DeployScriptsTableName)
+                new MySqlParameter("table", _deployScriptsTableName)
                 {
                     DbType = DbType.String
                 }
@@ -49,9 +52,9 @@ internal class MysqlScriptRunner : ScriptRunner
         return result;
     }
 
-    protected override async Task CreateDeployScriptTable()
+    public async Task CreateDeployScriptTable()
     {
-        var sql = $"CREATE TABLE {SetupModel.DeployScriptsTableName}(" +
+        var sql = $"CREATE TABLE {_deployScriptsTableName}(" +
                   "Id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
                   "Path TEXT NOT NULL," +
                   "Name TEXT NOT NULL," +
@@ -62,12 +65,12 @@ internal class MysqlScriptRunner : ScriptRunner
         await cmd.ExecuteNonQueryAsync();
     }
 
-    protected override async Task SaveLogAboutScriptRun(Query query)
+    public async Task SaveLogAboutScriptRun(Query query)
     {
 
         await using var command =
             new MySqlCommand(
-                $"INSERT INTO {SetupModel.DeployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
+                $"INSERT INTO {_deployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
                 _connection
             )
             {
@@ -87,17 +90,17 @@ internal class MysqlScriptRunner : ScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task RunScriptAsync(Query query)
+    public async Task RunScriptAsync(Query query)
     {
         await using var command = new MySqlCommand(query.QueryContent, _connection);
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch)
+    public async Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch)
     {
         var result = new List<DeployScript>();
         var query =
-            $"SELECT name, path FROM {SetupModel.DeployScriptsTableName} WHERE path LIKE @scriptPath";
+            $"SELECT name, path FROM {_deployScriptsTableName} WHERE path LIKE @scriptPath";
 
         await using var command = new MySqlCommand(query, _connection)
         {

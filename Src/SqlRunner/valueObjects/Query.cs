@@ -2,7 +2,7 @@
 
 namespace SqlRunner.valueObjects;
 
-public class Query
+internal class Query
 {
     public FileContent QueryContent { get; }
     public FileName FileName { get; }

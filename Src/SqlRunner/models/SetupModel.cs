@@ -2,7 +2,7 @@ using SqlRunner.valueObjects;
 
 namespace SqlRunner.models;
 
-public class SetupModel
+public record SetupModel
 {
     /// <summary>
     /// Connection string to database

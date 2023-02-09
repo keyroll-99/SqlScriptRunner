@@ -1,14 +1,24 @@
+using SqlRunner.Abstraction;
 using SqlRunner.exceptions;
 using SqlRunner.models;
+using SqlRunner.mssql;
+using SqlRunner.mysql;
+using SqlRunner.postgresql;
 using SqlRunner.valueObjects;
 
 namespace SqlRunner;
 
-public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
+public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 {
-    protected readonly SetupModel SetupModel;
+    private readonly SetupModel _setupModel;
+    private readonly IDatabaseScriptRunner _databaseScriptRunner;
 
-    #region public
+    public ScriptRunner(SetupModel setupModel)
+    {
+        InvalidSetupModelException.ThrowIfInvalid(setupModel);
+        _setupModel = setupModel;
+        _databaseScriptRunner = Database.GetDatabaseScriptRunner(setupModel);
+    }
     
     public void RunDeploy()
     {
@@ -19,20 +29,20 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
     // ReSharper disable once MemberCanBePrivate.Global
     public async Task RunDeployAsync()
     {
-        await InitConnectionAsync();
+        await _databaseScriptRunner.InitConnectionAsync();
 
         try
         {
-            if (!await IsDeployScriptTableExistsAsync())
+            if (!await _databaseScriptRunner.IsDeployScriptTableExistsAsync())
             {
-                await CreateDeployScriptTable();
+                await _databaseScriptRunner.CreateDeployScriptTable();
             }
 
             await ExecuteScripts();
         }
         finally
         {
-            await CloseConnectionAsync();
+            await _databaseScriptRunner.CloseConnectionAsync();
         }
     }
 
@@ -41,45 +51,27 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
         DisposeAsync().AsTask().Wait();
     }
 
-    public async ValueTask DisposeAsync() => await CloseConnectionAsync();
+    public async ValueTask DisposeAsync() => await _databaseScriptRunner.CreateDeployScriptTable();
 
-    #endregion
-
-    #region abstract
-
-    protected abstract Task InitConnectionAsync();
-    protected abstract Task CloseConnectionAsync();
-    protected abstract Task<bool> IsDeployScriptTableExistsAsync();
-    protected abstract Task CreateDeployScriptTable();
-    protected abstract Task SaveLogAboutScriptRun(Query query);
-    protected abstract Task RunScriptAsync(Query query);
-    protected abstract Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch);
-
-    #endregion
-    
     internal async Task RunInitScriptsIfNotNull()
     {
-        if (SetupModel.InitFolderPath is null)
+        if (_setupModel.InitFolderPath is null)
         {
             return;
         }
         await TryExecuteInitScript();
     }
 
-    protected ScriptRunner(SetupModel setupModel)
-    {
-        InvalidSetupModelException.ThrowIfInvalid(setupModel);
-        SetupModel = setupModel;
-    }
+
 
     private async Task TryExecuteInitScript()
     {
         try
         {
-            await InitConnectionAsync();
-            if (await IsDeployScriptTableExistsAsync())
+            await _databaseScriptRunner.InitConnectionAsync();
+            if (await _databaseScriptRunner.IsDeployScriptTableExistsAsync())
             {
-                await ExecuteScripts(SetupModel.InitFolderPath!, false);
+                await ExecuteScripts(_setupModel.InitFolderPath!, false);
             }
             else
             {
@@ -95,35 +87,35 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
         }
         finally
         {
-            await CloseConnectionAsync();
+            await _databaseScriptRunner.CloseConnectionAsync();
         }
     }
 
     private IEnumerable<string> GetInitScript()
     {
-        return Directory.EnumerateFiles(SetupModel.InitFolderPath!, "*.sql");
+        return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.sql");
     }
     
     private async Task ExecuteScriptsWithoutSaveLog(IEnumerable<Query> queries)
     {
         foreach (var query in queries)
         {
-            await RunScriptAsync(query);
+            await _databaseScriptRunner.RunScriptAsync(query);
         }
     }
 
     private async Task SaveLogsAboutInitScript(IEnumerable<Query> queries)
     {
-        await CreateDeployScriptTable();
+        await _databaseScriptRunner.CreateDeployScriptTable();
         foreach (var query in queries)
         {
-            await SaveLogAboutScriptRun(query);
+            await _databaseScriptRunner.SaveLogAboutScriptRun(query);
         }
     }
 
     private async Task ExecuteScripts()
     {
-        await ExecuteScripts(SetupModel.FolderPath);
+        await ExecuteScripts(_setupModel.FolderPath);
     }
 
     private async Task ExecuteScripts(FilePatch startPath, bool avoidInitFolder = true)
@@ -133,7 +125,7 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
 
         while (directionToExecute.TryDequeue(out var directionPath))
         {
-            if (avoidInitFolder && directionPath == SetupModel.InitFolderPath)
+            if (avoidInitFolder && directionPath == _setupModel.InitFolderPath)
             {
                 continue;
             }
@@ -153,8 +145,8 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
     {
         try
         {
-            await RunScriptAsync(query);
-            await SaveLogAboutScriptRun(query);
+            await _databaseScriptRunner.RunScriptAsync(query);
+            await _databaseScriptRunner.SaveLogAboutScriptRun(query);
         }
         catch (Exception e)
         {
@@ -179,11 +171,12 @@ public abstract class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunne
     private async Task<IEnumerable<Query>> GetQueries(FilePatch path)
     {
         var allFiles = Directory.EnumerateFiles(path, "*.sql").ToList();
-        var executedFiles = await GetExecutedFile(path);
+        var executedFiles = await _databaseScriptRunner.GetExecutedFile(path);
         var result = allFiles
             .Where(x => executedFiles.All(y => $"{y.Path}/{y.Name}" != x))
             .Select(x => new Query(x));
 
         return result;
     }
+    
 }

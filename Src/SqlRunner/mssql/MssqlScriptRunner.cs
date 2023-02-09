@@ -1,30 +1,33 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
+using SqlRunner.Abstraction;
 using SqlRunner.models;
 using SqlRunner.valueObjects;
 
 namespace SqlRunner.mssql;
 
-internal class MssqlScriptRunner : ScriptRunner
+internal class MssqlScriptRunner : IDatabaseScriptRunner
 {
     private readonly SqlConnection _connection;
+    private readonly string _deployScriptsTableName;
 
-    public MssqlScriptRunner(SetupModel setupModel) : base(setupModel)
+    public MssqlScriptRunner(string connectionString, string deployScriptsTableName)
     {
-        _connection = new SqlConnection(setupModel.ConnectionString);
+        _connection = new SqlConnection(connectionString);
+        _deployScriptsTableName = deployScriptsTableName;
     }
 
-    protected override async Task InitConnectionAsync()
+    public async Task InitConnectionAsync()
     {
         await _connection.OpenAsync();
     }
 
-    protected override async Task CloseConnectionAsync()
+    public async Task CloseConnectionAsync()
     {
         await _connection.CloseAsync();
     }
 
-    protected override async Task<bool> IsDeployScriptTableExistsAsync()
+    public async Task<bool> IsDeployScriptTableExistsAsync()
     {
         const string sql = "Select 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @table;";
 
@@ -32,7 +35,7 @@ internal class MssqlScriptRunner : ScriptRunner
         {
             Parameters =
             {
-                new SqlParameter("table", SetupModel.DeployScriptsTableName)
+                new SqlParameter("table", _deployScriptsTableName)
                 {
                     DbType = DbType.String
                 }
@@ -45,9 +48,9 @@ internal class MssqlScriptRunner : ScriptRunner
         return result;
     }
 
-    protected override async Task CreateDeployScriptTable()
+    public async Task CreateDeployScriptTable()
     {
-        var sql = $"CREATE TABLE {SetupModel.DeployScriptsTableName}(" +
+        var sql = $"CREATE TABLE {_deployScriptsTableName}(" +
                   "Id INT IDENTITY(1,1) PRIMARY KEY," +
                   "Path TEXT NOT NULL," +
                   "Name TEXT NOT NULL," +
@@ -58,11 +61,11 @@ internal class MssqlScriptRunner : ScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task SaveLogAboutScriptRun(Query query)
+    public async Task SaveLogAboutScriptRun(Query query)
     {
         await using var command =
             new SqlCommand(
-                $"INSERT INTO {SetupModel.DeployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
+                $"INSERT INTO {_deployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
                 _connection
             )
             {
@@ -82,17 +85,17 @@ internal class MssqlScriptRunner : ScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task RunScriptAsync(Query query)
+    public async Task RunScriptAsync(Query query)
     {
         await using var command = new SqlCommand(query.QueryContent, _connection);
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task<List<DeployScript>> GetExecutedFile(FilePatch path)
+    public async Task<List<DeployScript>> GetExecutedFile(FilePatch path)
     {
         var result = new List<DeployScript>();
         var query =
-            $"SELECT name, path FROM {SetupModel.DeployScriptsTableName} WHERE path LIKE @scriptPath";
+            $"SELECT name, path FROM {_deployScriptsTableName} WHERE path LIKE @scriptPath";
 
         await using var command = new SqlCommand(query, _connection)
         {

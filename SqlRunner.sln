@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlRunner", "SqlRunner\SqlRunner.csproj", "{A96996D0-6050-4062-A83B-FB55654B45BE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{99AC47B0-3F04-4C4B-827F-1527ACE23741}"
@@ -16,10 +14,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A96996D0-6050-4062-A83B-FB55654B45BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A96996D0-6050-4062-A83B-FB55654B45BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A96996D0-6050-4062-A83B-FB55654B45BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A96996D0-6050-4062-A83B-FB55654B45BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C02B99B-33B4-4C34-B92D-95F03FB5F0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -34,7 +28,6 @@ Global
 		{CA6AE4E3-FED2-4F16-BE82-084963FC167D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A96996D0-6050-4062-A83B-FB55654B45BE} = {99AC47B0-3F04-4C4B-827F-1527ACE23741}
 		{CA6AE4E3-FED2-4F16-BE82-084963FC167D} = {99AC47B0-3F04-4C4B-827F-1527ACE23741}
 	EndGlobalSection
 EndGlobal
