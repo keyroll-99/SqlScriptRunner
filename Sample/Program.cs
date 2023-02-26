@@ -5,11 +5,13 @@ using SqlRunner.models;
 
 var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
 {
-    ConnectionString = "Server=127.0.0.1;Port=5432;Database=crimeStory;User Id=admin;Password=passwd;SearchPath=user;",
-    FolderPath = "/home/keyroll/dev/projects/crimeStory/api/CrimeStoryApi/src/User/User.Core/Scripts",
-    InitFolderPath = "/home/keyroll/dev/projects/crimeStory/api/CrimeStoryApi/src/User/User.Core/Scripts/Init",
+    ConnectionString = "Server=127.0.0.1;Port=5432;Database=Tests;User Id=admin;Password=passwd;SearchPath=sql_script_runner;",
+    FolderPath = "C:\\projects\\sqlScriptRunner\\SqlScriptRunner\\SampleScript",
+    InitFolderPath = "C:\\projects\\sqlScriptRunner\\SqlScriptRunner\\SampleScript\\Init",
     DataBaseType = DataBaseTypeEnum.Postgresql,
     DeployScriptsTableName = "UserDeployScript"
 });
+
+// Console.WriteLine(Directory.EnumerateFiles("C:\\projects\\sqlScriptRunner\\SqlScriptRunner\\SampleScript\\Init").First());
 
 scriptRunner.RunDeploy();

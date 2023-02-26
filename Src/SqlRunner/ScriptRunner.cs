@@ -19,16 +19,16 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
         _setupModel = setupModel;
         _databaseScriptRunner = Database.GetDatabaseScriptRunner(setupModel);
     }
-    
+
     public void RunDeploy()
     {
         var task = RunDeployAsync();
         task.Wait();
     }
 
-    // ReSharper disable once MemberCanBePrivate.Global
     public async Task RunDeployAsync()
     {
+        await RunInitScriptsIfNotNull();
         await _databaseScriptRunner.InitConnectionAsync();
 
         try
@@ -59,9 +59,9 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
         {
             return;
         }
+
         await TryExecuteInitScript();
     }
-
 
 
     private async Task TryExecuteInitScript()
@@ -75,7 +75,8 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
             }
             else
             {
-                var intiScripts = GetInitScript().Select(x => new Query(x)).ToList();
+                var intiScripts = GetInitScript().Select(x => new Query(x));
+
                 await ExecuteScriptsWithoutSaveLog(intiScripts);
                 await SaveLogsAboutInitScript(intiScripts);
             }
@@ -95,7 +96,7 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
     {
         return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.sql");
     }
-    
+
     private async Task ExecuteScriptsWithoutSaveLog(IEnumerable<Query> queries)
     {
         foreach (var query in queries)
@@ -118,9 +119,9 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
         await ExecuteScripts(_setupModel.FolderPath);
     }
 
-    private async Task ExecuteScripts(FilePatch startPath, bool avoidInitFolder = true)
+    private async Task ExecuteScripts(DictionaryPath startPath, bool avoidInitFolder = true)
     {
-        var directionToExecute = new Queue<FilePatch>();
+        var directionToExecute = new Queue<DictionaryPath>();
         directionToExecute.Enqueue(startPath);
 
         while (directionToExecute.TryDequeue(out var directionPath))
@@ -160,7 +161,7 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
         return File.Exists($"{path}/disable");
     }
 
-    private static void UpdateQueue(ref Queue<FilePatch> queue, FilePatch currentDirection)
+    private static void UpdateQueue(ref Queue<DictionaryPath> queue, DictionaryPath currentDirection)
     {
         foreach (var subDirectionPath in Directory.GetDirectories(currentDirection))
         {
@@ -168,15 +169,14 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
         }
     }
 
-    private async Task<IEnumerable<Query>> GetQueries(FilePatch path)
+    private async Task<IEnumerable<Query>> GetQueries(DictionaryPath path)
     {
         var allFiles = Directory.EnumerateFiles(path, "*.sql").ToList();
         var executedFiles = await _databaseScriptRunner.GetExecutedFile(path);
         var result = allFiles
-            .Where(x => executedFiles.All(y => $"{y.Path}/{y.Name}" != x))
+            .Where(x => executedFiles.All(y => $"{y.Path}{Path.DirectorySeparatorChar}{y.Name}" != x))
             .Select(x => new Query(x));
 
         return result;
     }
-    
 }

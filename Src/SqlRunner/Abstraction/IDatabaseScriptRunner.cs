@@ -11,5 +11,5 @@ internal interface IDatabaseScriptRunner
     Task CreateDeployScriptTable();
     Task SaveLogAboutScriptRun(Query query);
     Task RunScriptAsync(Query query);
-    Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch);
+    Task<List<DeployScript>> GetExecutedFile(DictionaryPath filePatch);
 }

@@ -71,11 +71,11 @@ internal class MssqlScriptRunner : IDatabaseScriptRunner
             {
                 Parameters =
                 {
-                    new SqlParameter("scriptPath", query.FilePatch)
+                    new SqlParameter("scriptPath", query.FilePath.GetFileDictionaryPath().Value)
                     {
                         DbType = DbType.String
                     },
-                    new SqlParameter("scriptName", query.FileName)
+                    new SqlParameter("scriptName", query.FileName.Value)
                     {
                         DbType = DbType.String
                     }
@@ -91,7 +91,7 @@ internal class MssqlScriptRunner : IDatabaseScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<List<DeployScript>> GetExecutedFile(FilePatch path)
+    public async Task<List<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
     {
         var result = new List<DeployScript>();
         var query =
@@ -99,7 +99,7 @@ internal class MssqlScriptRunner : IDatabaseScriptRunner
 
         await using var command = new SqlCommand(query, _connection)
         {
-            Parameters = { new SqlParameter("scriptPath", path) }
+            Parameters = { new SqlParameter("scriptPath", dictionaryPath.Value) }
         };
 
         await using var reader = await command.ExecuteReaderAsync();

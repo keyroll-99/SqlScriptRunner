@@ -6,20 +6,20 @@ internal class Query
 {
     public FileContent QueryContent { get; }
     public FileName FileName { get; }
-    public FilePatch FilePatch { get; }
+    public FilePath FilePath { get; }
 
-    public Query(FilePatch filePath)
+    public Query(FilePath filePath)
     {
-        FilePatch = filePath.GetPath();
+        FilePath = filePath;
         FileName = filePath.GetFileName();
         QueryContent = GetFileContent();
     }
     
     private FileContent GetFileContent()
     {
-        var fileContent = File.ReadAllText(FilePatch);
+        var fileContent = File.ReadAllText(FilePath);
         
-        EmptyFileContentException.ThrowIfEmptyFileContent(fileContent, FilePatch);
+        EmptyFileContentException.ThrowIfEmptyFileContent(fileContent, FilePath);
 
         return fileContent;
     }

@@ -64,8 +64,8 @@ internal class PostgresScriptRunner : IDatabaseScriptRunner
             {
                 Parameters =
                 {
-                    new NpgsqlParameter("scriptPath", query.FilePatch),
-                    new NpgsqlParameter("scriptName", query.FileName)
+                    new NpgsqlParameter("scriptPath", query.FilePath.GetFileDictionaryPath().Value),
+                    new NpgsqlParameter("scriptName", query.FileName.Value)
                 }
             };
         await command.ExecuteNonQueryAsync();
@@ -77,7 +77,7 @@ internal class PostgresScriptRunner : IDatabaseScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch)
+    public async Task<List<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
     {
         var result = new List<DeployScript>();
         var query =
@@ -85,7 +85,7 @@ internal class PostgresScriptRunner : IDatabaseScriptRunner
 
         await using var command = new NpgsqlCommand(query, _connection)
         {
-            Parameters = { new NpgsqlParameter("scriptPath", filePatch) }
+            Parameters = { new NpgsqlParameter("scriptPath", dictionaryPath.Value) }
         };
 
         await using var reader = await command.ExecuteReaderAsync();

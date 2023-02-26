@@ -76,11 +76,11 @@ internal class MysqlScriptRunner : IDatabaseScriptRunner
             {
                 Parameters =
                 {
-                    new MySqlParameter("scriptPath", query.FilePatch)
+                    new MySqlParameter("scriptPath", query.FilePath.GetFileDictionaryPath().Value)
                     {
                         DbType = DbType.String
                     },
-                    new MySqlParameter("scriptName", query.FileName)
+                    new MySqlParameter("scriptName", query.FileName.Value)
                     {
                         DbType = DbType.String
                     }
@@ -96,7 +96,7 @@ internal class MysqlScriptRunner : IDatabaseScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<List<DeployScript>> GetExecutedFile(FilePatch filePatch)
+    public async Task<List<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
     {
         var result = new List<DeployScript>();
         var query =
@@ -104,7 +104,7 @@ internal class MysqlScriptRunner : IDatabaseScriptRunner
 
         await using var command = new MySqlCommand(query, _connection)
         {
-            Parameters = { new MySqlParameter("scriptPath", filePatch) }
+            Parameters = { new MySqlParameter("scriptPath", dictionaryPath.Value) }
         };
 
         await using var reader = await command.ExecuteReaderAsync();

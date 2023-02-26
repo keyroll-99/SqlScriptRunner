@@ -11,7 +11,7 @@ public record SetupModel
     /// <summary>
     /// Path to root folder with sql script
     /// </summary>
-    public FilePatch FolderPath { get; init; }
+    public DictionaryPath FolderPath { get; init; }
     /// <summary>
     /// Name of table where will be keep all deployed scripts
     /// </summary>
@@ -24,7 +24,7 @@ public record SetupModel
     /// <summary>
     /// Path to folder with init scripts (like create database or create schema)
     /// </summary>
-    public FilePatch? InitFolderPath { get; init; }
+    public DictionaryPath? InitFolderPath { get; init; }
 
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(ConnectionString)
