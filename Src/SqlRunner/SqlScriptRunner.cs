@@ -10,4 +10,6 @@ public static class SqlScriptRunner
 {
     public static IScriptRunner GetScriptRunner(SetupModel setupModel)
         => new ScriptRunner(setupModel);
+    
+    
 }
