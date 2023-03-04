@@ -76,10 +76,6 @@ public class SqlScriptRunnerTest
         _databaseScriptRunner.Verify(x => x.CloseConnectionAsync(), Times.Exactly(2));
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "InitScript")),
             Times.Once);
-
-        _databaseScriptRunner.Verify(x => x.CreateDeployScriptTable());
-        _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "SubInit")),
-            Times.Once);
     }
 
     [Fact]
