@@ -91,7 +91,8 @@ internal class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 
     private IEnumerable<string> GetInitScript()
     {
-        return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.sql", SearchOption.AllDirectories);
+        return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.*", SearchOption.AllDirectories)
+            .Where(x => x.EndsWith(".sql") || x.EndsWith(".Sql") || x.EndsWith(".SQL"));
     }
 
     private async Task ExecuteScriptsWithoutSaveLog(IEnumerable<Query> queries)
