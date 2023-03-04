@@ -1,6 +1,8 @@
+using SqlRunner.valueObjects;
+
 namespace SqlRunner.models;
 
-public class SetupModel
+public record SetupModel
 {
     /// <summary>
     /// Connection string to database
@@ -9,7 +11,7 @@ public class SetupModel
     /// <summary>
     /// Path to root folder with sql script
     /// </summary>
-    public string FolderPath { get; init; }
+    public DictionaryPath FolderPath { get; init; }
     /// <summary>
     /// Name of table where will be keep all deployed scripts
     /// </summary>
@@ -22,7 +24,7 @@ public class SetupModel
     /// <summary>
     /// Path to folder with init scripts (like create database or create schema)
     /// </summary>
-    public string? InitFolderPath { get; init; }
+    public DictionaryPath? InitFolderPath { get; init; }
 
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(ConnectionString)

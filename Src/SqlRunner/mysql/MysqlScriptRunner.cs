@@ -1,29 +1,33 @@
 using System.Data;
 using MySqlConnector;
+using SqlRunner.Abstraction;
 using SqlRunner.models;
+using SqlRunner.valueObjects;
 
 namespace SqlRunner.mysql;
 
-public class MysqlScriptRunner : ScriptRunner
+internal class MysqlScriptRunner : IDatabaseScriptRunner
 {
     private readonly MySqlConnection _connection;
+    private readonly string _deployScriptsTableName;
 
-    public MysqlScriptRunner(SetupModel setupModel) : base(setupModel)
+    public MysqlScriptRunner(string connectionString, string deployScriptsTableName)
     {
-        _connection = new MySqlConnection(setupModel.ConnectionString);
+        _connection = new MySqlConnection(connectionString);
+        _deployScriptsTableName = deployScriptsTableName;
     }
 
-    protected override async Task InitConnectionAsync()
+    public async Task InitConnectionAsync()
     {
         await _connection.OpenAsync();
     }
 
-    protected override async Task CloseConnectionAsync()
+    public async Task CloseConnectionAsync()
     {
         await _connection.CloseAsync();
     }
 
-    protected override async Task<bool> IsDeployScriptTableExistsAsync()
+    public async Task<bool> IsDeployScriptTableExistsAsync()
     {
         const string sql = "SELECT COUNT(*)" +
                            "FROM information_schema.tables " +
@@ -34,7 +38,7 @@ public class MysqlScriptRunner : ScriptRunner
         {
             Parameters =
             {
-                new MySqlParameter("table", SetupModel.DeployScriptsTableName)
+                new MySqlParameter("table", _deployScriptsTableName)
                 {
                     DbType = DbType.String
                 }
@@ -48,9 +52,9 @@ public class MysqlScriptRunner : ScriptRunner
         return result;
     }
 
-    protected override async Task CreateDeployScriptTable()
+    public async Task CreateDeployScriptTable()
     {
-        var sql = $"CREATE TABLE {SetupModel.DeployScriptsTableName}(" +
+        var sql = $"CREATE TABLE {_deployScriptsTableName}(" +
                   "Id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
                   "Path TEXT NOT NULL," +
                   "Name TEXT NOT NULL," +
@@ -61,24 +65,22 @@ public class MysqlScriptRunner : ScriptRunner
         await cmd.ExecuteNonQueryAsync();
     }
 
-    protected override async Task SaveLogAboutScriptRun(string filePath)
+    public async Task SaveLogAboutScriptRun(Query query)
     {
-        var path = GetPath(filePath);
-        var name = GetFileName(filePath);
 
         await using var command =
             new MySqlCommand(
-                $"INSERT INTO {SetupModel.DeployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
+                $"INSERT INTO {_deployScriptsTableName} (Path, Name) VALUES (@scriptPath, @scriptName)",
                 _connection
             )
             {
                 Parameters =
                 {
-                    new MySqlParameter("scriptPath", path)
+                    new MySqlParameter("scriptPath", query.FilePath.GetFileDictionaryPath().Value)
                     {
                         DbType = DbType.String
                     },
-                    new MySqlParameter("scriptName", name)
+                    new MySqlParameter("scriptName", query.FileName.Value)
                     {
                         DbType = DbType.String
                     }
@@ -88,22 +90,21 @@ public class MysqlScriptRunner : ScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task RunScriptAsync(string filePath)
+    public async Task RunScriptAsync(Query query)
     {
-        var query = GetFileContent(filePath);
-        await using var command = new MySqlCommand(query, _connection);
+        await using var command = new MySqlCommand(query.QueryContent, _connection);
         await command.ExecuteNonQueryAsync();
     }
 
-    protected override async Task<List<DeployScript>> GetExecutedFile(string path)
+    public async Task<IEnumerable<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
     {
         var result = new List<DeployScript>();
         var query =
-            $"SELECT name, path FROM {SetupModel.DeployScriptsTableName} WHERE path LIKE @scriptPath";
+            $"SELECT name, path FROM {_deployScriptsTableName} WHERE path LIKE @scriptPath";
 
         await using var command = new MySqlCommand(query, _connection)
         {
-            Parameters = { new MySqlParameter("scriptPath", path) }
+            Parameters = { new MySqlParameter("scriptPath", dictionaryPath.Value) }
         };
 
         await using var reader = await command.ExecuteReaderAsync();

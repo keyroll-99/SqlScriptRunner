@@ -8,7 +8,7 @@ You can use it when you have database firs project and before start server you w
 * FolderPath: Path to root folder with sql script
 * DeployScriptsTableName: Name of table where will be keep all deployed scripts
 * DataBaseType: Typeof database (Postgresql, Mssql, Mysql)
-
+* InitFolderPath: Path to folder with init scripts (like create database or create schema)
 ## Example of use
 
 ```
@@ -16,6 +16,7 @@ var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
 {
     ConnectionString = "Server=localhost; Database=tests; User Id=sa; Password=pa55w0rd!;TrustServerCertificate=true",
     FolderPath = "/mssql/scripts",
+    InitFolderPath = "/mssql/scripts/init",
     DataBaseType = DataBaseTypeEnum.Mssql
 }).RunDeploy();
 ```
