@@ -9,5 +9,8 @@ namespace SqlRunner;
 public static class SqlScriptRunner
 {
     public static IScriptRunner GetScriptRunner(SetupModel setupModel)
-        => new ScriptRunner(setupModel);
+    {
+        var scriptRunner = Database.GetDatabaseScriptRunner(setupModel);
+        return new ScriptRunner(setupModel, scriptRunner);
+    }
 }

@@ -1,23 +1,20 @@
 using SqlRunner.Abstraction;
 using SqlRunner.exceptions;
 using SqlRunner.models;
-using SqlRunner.mssql;
-using SqlRunner.mysql;
-using SqlRunner.postgresql;
 using SqlRunner.valueObjects;
 
 namespace SqlRunner;
 
-public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
+internal class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 {
     private readonly SetupModel _setupModel;
     private readonly IDatabaseScriptRunner _databaseScriptRunner;
 
-    public ScriptRunner(SetupModel setupModel)
+    public ScriptRunner(SetupModel setupModel, IDatabaseScriptRunner databaseScriptRunner)
     {
         InvalidSetupModelException.ThrowIfInvalid(setupModel);
         _setupModel = setupModel;
-        _databaseScriptRunner = Database.GetDatabaseScriptRunner(setupModel);
+        _databaseScriptRunner = databaseScriptRunner;
     }
 
     public void RunDeploy()
@@ -53,7 +50,7 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 
     public async ValueTask DisposeAsync() => await _databaseScriptRunner.CreateDeployScriptTable();
 
-    internal async Task RunInitScriptsIfNotNull()
+    private async Task RunInitScriptsIfNotNull()
     {
         if (_setupModel.InitFolderPath is null)
         {
@@ -94,7 +91,7 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 
     private IEnumerable<string> GetInitScript()
     {
-        return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.sql");
+        return Directory.EnumerateFiles(_setupModel.InitFolderPath!, "*.sql", SearchOption.AllDirectories);
     }
 
     private async Task ExecuteScriptsWithoutSaveLog(IEnumerable<Query> queries)
@@ -126,7 +123,8 @@ public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 
         while (directionToExecute.TryDequeue(out var directionPath))
         {
-            if (avoidInitFolder && directionPath == _setupModel.InitFolderPath)
+            if (avoidInitFolder && _setupModel.InitFolderPath?.Value is not null &&
+                directionPath.Value.StartsWith(_setupModel.InitFolderPath))
             {
                 continue;
             }

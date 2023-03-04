@@ -96,7 +96,7 @@ internal class MysqlScriptRunner : IDatabaseScriptRunner
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<List<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
+    public async Task<IEnumerable<DeployScript>> GetExecutedFile(DictionaryPath dictionaryPath)
     {
         var result = new List<DeployScript>();
         var query =

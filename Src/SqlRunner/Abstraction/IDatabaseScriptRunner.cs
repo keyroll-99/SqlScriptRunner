@@ -1,6 +1,9 @@
-﻿using SqlRunner.models;
+﻿using System.Runtime.CompilerServices;
+using SqlRunner.models;
 using SqlRunner.valueObjects;
 
+// this is necessary for mock it in unit tests
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace SqlRunner.Abstraction;
 
 internal interface IDatabaseScriptRunner
@@ -11,5 +14,5 @@ internal interface IDatabaseScriptRunner
     Task CreateDeployScriptTable();
     Task SaveLogAboutScriptRun(Query query);
     Task RunScriptAsync(Query query);
-    Task<List<DeployScript>> GetExecutedFile(DictionaryPath filePatch);
+    Task<IEnumerable<DeployScript>> GetExecutedFile(DictionaryPath filePatch);
 }
