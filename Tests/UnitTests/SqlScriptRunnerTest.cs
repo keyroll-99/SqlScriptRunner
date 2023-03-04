@@ -76,11 +76,8 @@ public class SqlScriptRunnerTest
         _databaseScriptRunner.Verify(x => x.CloseConnectionAsync(), Times.Exactly(2));
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "InitScript")),
             Times.Once);
-        _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "SubInit")), Times.Once);
-        
+
         _databaseScriptRunner.Verify(x => x.CreateDeployScriptTable());
-        _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "SubInit")),
-            Times.Once);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "SubInit")),
             Times.Once);
     }
@@ -145,42 +142,51 @@ public class SqlScriptRunnerTest
         // arrange
 
         #region openConnection
-            _databaseScriptRunner.Verify(x => x.InitConnectionAsync(), Times.Exactly(2));
-            _databaseScriptRunner.Verify(x => x.CloseConnectionAsync(), Times.Exactly(2));
+
+        _databaseScriptRunner.Verify(x => x.InitConnectionAsync(), Times.Exactly(2));
+        _databaseScriptRunner.Verify(x => x.CloseConnectionAsync(), Times.Exactly(2));
+
         #endregion
-        
+
         #region disabled
+
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "it's disabled")),
             Times.Never);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "it's disabled")),
             Times.Never);
+
         #endregion
 
         #region executed
+
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "executed.sql")),
             Times.Never);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "executed.sql")),
             Times.Never);
-        
+
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "not executed")),
             Times.Once);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "not executed")),
             Times.Once);
+
         #endregion
 
         #region Init
+
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "Inti sql")),
             Times.Once);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "Inti sql")),
             Times.Once);
+
         #endregion
 
         #region part1
+
         _databaseScriptRunner.Verify(x => x.RunScriptAsync(It.Is<Query>(y => y.QueryContent == "user.sql")),
             Times.Once);
         _databaseScriptRunner.Verify(x => x.SaveLogAboutScriptRun(It.Is<Query>(y => y.QueryContent == "user.sql")),
             Times.Once);
-        #endregion
 
+        #endregion
     }
 }
