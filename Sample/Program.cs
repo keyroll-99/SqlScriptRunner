@@ -12,6 +12,4 @@ var scriptRunner = SqlScriptRunner.GetScriptRunner(new SetupModel
     DeployScriptsTableName = "UserDeployScript"
 });
 
-// Console.WriteLine(Directory.EnumerateFiles("C:\\projects\\sqlScriptRunner\\SqlScriptRunner\\SampleScript\\Init").First());
-
 scriptRunner.RunDeploy();
