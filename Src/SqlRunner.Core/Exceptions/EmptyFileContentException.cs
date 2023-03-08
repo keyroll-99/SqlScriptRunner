@@ -1,4 +1,4 @@
-﻿namespace SqlRunner.exceptions;
+﻿namespace SqlRunner.Core.Exceptions;
 
 public class EmptyFileContentException : Exception
 {

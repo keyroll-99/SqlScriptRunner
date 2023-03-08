@@ -1,7 +1,8 @@
+
 using SqlRunner.Abstraction;
-using SqlRunner.exceptions;
-using SqlRunner.models;
-using SqlRunner.valueObjects;
+using SqlRunner.Core.Exceptions;
+using SqlRunner.Core.Models;
+using SqlRunner.Core.ValueObject;
 
 namespace SqlRunner;
 

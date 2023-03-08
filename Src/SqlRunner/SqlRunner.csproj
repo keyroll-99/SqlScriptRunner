@@ -18,12 +18,17 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
         <PackageReference Include="MySqlConnector" Version="2.1.13" />
-        <PackageReference Include="Npgsql" Version="6.0.6" />
         <None Include="..\..\README.md" pack="true" PackagePath="\" />    
     </ItemGroup>
     
     <ItemGroup>
         <InternalsVisibleTo Include="UnitTests" />
+        <InternalsVisibleTo Include="SqlRunner.Postgresql" />
+        <InternalsVisibleTo Include="SqlRunner.MySql" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\SqlRunner.Abstraction\SqlRunner.Abstraction.csproj" />
     </ItemGroup>
 
 </Project>

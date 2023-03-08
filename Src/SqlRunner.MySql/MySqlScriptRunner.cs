@@ -1,10 +1,10 @@
 using System.Data;
 using MySqlConnector;
 using SqlRunner.Abstraction;
-using SqlRunner.models;
-using SqlRunner.valueObjects;
+using SqlRunner.Core.Models;
+using SqlRunner.Core.ValueObject;
 
-namespace SqlRunner.mysql;
+namespace SqlRunner.MySql;
 
 internal class MysqlScriptRunner : IDatabaseScriptRunner
 {

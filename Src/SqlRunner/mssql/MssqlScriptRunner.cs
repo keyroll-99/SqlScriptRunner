@@ -1,8 +1,8 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using SqlRunner.Abstraction;
-using SqlRunner.models;
-using SqlRunner.valueObjects;
+using SqlRunner.Core.Models;
+using SqlRunner.Core.ValueObject;
 
 namespace SqlRunner.mssql;
 

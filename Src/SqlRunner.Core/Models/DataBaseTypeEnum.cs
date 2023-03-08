@@ -1,4 +1,4 @@
-namespace SqlRunner.models;
+namespace SqlRunner.Core.Models;
 
 public enum DataBaseTypeEnum
 {

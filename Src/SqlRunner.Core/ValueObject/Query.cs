@@ -1,6 +1,6 @@
-﻿using SqlRunner.exceptions;
+﻿using SqlRunner.Core.Exceptions;
 
-namespace SqlRunner.valueObjects;
+namespace SqlRunner.Core.ValueObject;
 
 internal class Query
 {

@@ -1,6 +1,6 @@
-using SqlRunner.valueObjects;
+using SqlRunner.Core.ValueObject;
 
-namespace SqlRunner.models;
+namespace SqlRunner.Core.Models;
 
 public record SetupModel
 {
@@ -16,11 +16,7 @@ public record SetupModel
     /// Name of table where will be keep all deployed scripts
     /// </summary>
     public string DeployScriptsTableName { get; init; } = "DeployScripts";
-    /// <summary>
-    /// Typeof database
-    /// </summary>
-    public DataBaseTypeEnum DataBaseType { get; init; }
-    
+
     /// <summary>
     /// Path to folder with init scripts (like create database or create schema)
     /// </summary>
@@ -29,6 +25,5 @@ public record SetupModel
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(ConnectionString)
         && !string.IsNullOrWhiteSpace(FolderPath)
-        && !string.IsNullOrWhiteSpace(DeployScriptsTableName)
-        && Enum.IsDefined(typeof(DataBaseTypeEnum), DataBaseType);
+        && !string.IsNullOrWhiteSpace(DeployScriptsTableName);
 }

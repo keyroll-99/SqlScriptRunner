@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using SqlRunner.models;
-using SqlRunner.valueObjects;
+using SqlRunner.Core.Models;
+using SqlRunner.Core.ValueObject;
 
 // this is necessary for mock it in unit tests
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

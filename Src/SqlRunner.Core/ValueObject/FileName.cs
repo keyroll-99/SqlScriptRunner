@@ -1,4 +1,4 @@
-﻿namespace SqlRunner.valueObjects;
+﻿namespace SqlRunner.Core.ValueObject;
 
 internal class FileName
 {

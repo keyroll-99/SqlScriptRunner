@@ -2,9 +2,9 @@
 using Moq;
 using SqlRunner;
 using SqlRunner.Abstraction;
-using SqlRunner.exceptions;
-using SqlRunner.models;
-using SqlRunner.valueObjects;
+using SqlRunner.Core.Exceptions;
+using SqlRunner.Core.Models;
+using SqlRunner.Core.ValueObject;
 using Xunit;
 
 namespace Test;
@@ -20,7 +20,6 @@ public class SqlScriptRunnerTest
         _baseSetupModel = new SetupModel
         {
             ConnectionString = "ConnString",
-            DataBaseType = DataBaseTypeEnum.Mssql,
             FolderPath = $".{Path.DirectorySeparatorChar}TestScripts",
             DeployScriptsTableName = "DeployTable",
             InitFolderPath = $".{Path.DirectorySeparatorChar}TestScripts{Path.DirectorySeparatorChar}Init"
@@ -31,19 +30,18 @@ public class SqlScriptRunnerTest
     }
 
     [Theory]
-    [InlineData(null, "test", "name", 1)]
-    [InlineData("connString", null, "name", 1)]
-    [InlineData("connString", "test", "", 1)]
-    [InlineData("connString", "test", "name", -1)]
+    [InlineData(null, "test", "name")]
+    [InlineData("connString", null, "name")]
+    [InlineData("connString", "test", "")]
+    [InlineData("connString", "test", "name")]
     public void ScriptRunner_WhenInvalidSetupModel_ThenThrowException(string connectionString, string folderPath,
-        string deployScriptsTableName, int dataBaseType)
+        string deployScriptsTableName)
     {
         // arrange
         var setupModel = new SetupModel()
         {
             ConnectionString = connectionString,
             FolderPath = folderPath,
-            DataBaseType = (DataBaseTypeEnum)dataBaseType,
             DeployScriptsTableName = deployScriptsTableName
         };
 
@@ -61,7 +59,6 @@ public class SqlScriptRunnerTest
         var setupModel = new SetupModel
         {
             ConnectionString = "ConnString",
-            DataBaseType = DataBaseTypeEnum.Mssql,
             FolderPath = $".{Path.DirectorySeparatorChar}TestInitScripts",
             DeployScriptsTableName = "DeployTable",
             InitFolderPath = $".{Path.DirectorySeparatorChar}TestInitScripts{Path.DirectorySeparatorChar}Init"
@@ -90,7 +87,6 @@ public class SqlScriptRunnerTest
         var setupModel = new SetupModel
         {
             ConnectionString = "ConnString",
-            DataBaseType = DataBaseTypeEnum.Mssql,
             FolderPath = "./TestInitScripts",
             DeployScriptsTableName = "DeployTable",
         };

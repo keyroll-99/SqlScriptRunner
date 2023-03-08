@@ -1,6 +1,6 @@
-﻿using SqlRunner.models;
+﻿using SqlRunner.Core.Models;
 
-namespace SqlRunner.exceptions;
+namespace SqlRunner.Core.Exceptions;
 
 public class InvalidSetupModelException : Exception
 {
