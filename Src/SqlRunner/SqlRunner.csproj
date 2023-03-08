@@ -11,13 +11,12 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>
         <RepositoryUrl>https://github.com/kaaziuu/SqlScriptRunner</RepositoryUrl>
-        <PackageTags>sql-runner script-runner database first</PackageTags>
+        <PackageTags>sql-runner script-runner database-first sql-script-runner</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
-        <PackageReference Include="MySqlConnector" Version="2.1.13" />
         <None Include="..\..\README.md" pack="true" PackagePath="\" />    
     </ItemGroup>
     
@@ -25,6 +24,7 @@
         <InternalsVisibleTo Include="UnitTests" />
         <InternalsVisibleTo Include="SqlRunner.Postgresql" />
         <InternalsVisibleTo Include="SqlRunner.MySql" />
+        <InternalsVisibleTo Include="SqlRunner.Mssql" />
     </ItemGroup>
     
     <ItemGroup>

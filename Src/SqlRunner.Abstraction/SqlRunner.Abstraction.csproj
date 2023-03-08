@@ -15,6 +15,7 @@
         <InternalsVisibleTo Include="SqlRunner" />
         <InternalsVisibleTo Include="SqlRunner.Postgresql" />
         <InternalsVisibleTo Include="SqlRunner.MySql" />
+        <InternalsVisibleTo Include="SqlRunner.Mssql" />
     </ItemGroup>
 
 </Project>

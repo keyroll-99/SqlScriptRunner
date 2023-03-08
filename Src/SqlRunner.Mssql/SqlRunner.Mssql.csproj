@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <Version>1.0.0</Version>
         <TargetFramework>net6.0</TargetFramework>
@@ -15,15 +14,15 @@
         <PackageTags>sql-runner script-runner database-first sql-script-runner</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-
+    
     <ItemGroup>
         <None Include="..\..\README.md" pack="true" PackagePath="\" />
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Npgsql" Version="6.0.6" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\SqlRunner\SqlRunner.csproj" />
     </ItemGroup>

@@ -4,7 +4,7 @@ using SqlRunner.Abstraction;
 using SqlRunner.Core.Models;
 using SqlRunner.Core.ValueObject;
 
-namespace SqlRunner.mssql;
+namespace SqlRunner.Mssql;
 
 internal class MssqlScriptRunner : IDatabaseScriptRunner
 {
