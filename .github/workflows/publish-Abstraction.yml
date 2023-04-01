@@ -1,6 +1,8 @@
 name: publish SqlRunner.Abstraction
 
-on: [workflow_dispatch]
+on:
+    pull_request:
+        branches: [master]
 
 jobs:
     build:
