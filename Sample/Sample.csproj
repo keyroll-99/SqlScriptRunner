@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Src\SqlRunner.Mssql\SqlRunner.Mssql.csproj" />
+      <ProjectReference Include="..\Src\SqlRunner.MySql\SqlRunner.MySql.csproj" />
       <ProjectReference Include="..\Src\SqlRunner.Postgresql\SqlRunner.Postgresql.csproj" />
       <ProjectReference Include="..\Src\SqlRunner\SqlRunner.csproj" />
     </ItemGroup>
