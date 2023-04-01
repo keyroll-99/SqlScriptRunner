@@ -1,4 +1,4 @@
-name: publish SqlRunner
+name: publish SqlRunner all
 
 on: [workflow_dispatch]
 
