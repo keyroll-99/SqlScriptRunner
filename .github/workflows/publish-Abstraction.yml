@@ -21,6 +21,6 @@ jobs:
             - name: Build
               run: dotnet build --no-restore
             - name: Package
-              run: dotnet pack -c Release -o . Src/SqlRunner/SqlRunner.Abstraction.csproj
+              run: dotnet pack -c Release -o . Src/SqlRunner.Abstraction/SqlRunner.Abstraction.csproj
             - name: Publish
               run: dotnet nuget push *.nupkg -s 'https://api.nuget.org/v3/index.json' -k ${{ secrets.NUGET_API_KEY }}  --skip-duplicate
