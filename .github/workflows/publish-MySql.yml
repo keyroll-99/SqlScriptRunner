@@ -1,4 +1,4 @@
-name: publish SqlRunner.Abstraction
+name: publish SqlRunner.MySql
 
 on: [workflow_dispatch]
 
@@ -19,6 +19,6 @@ jobs:
             - name: Build
               run: dotnet build --no-restore
             - name: Package
-              run: dotnet pack -c Release -o . Src/SqlRunner.Abstraction/SqlRunner.Abstraction.csproj
+              run: dotnet pack -c Release -o . Src/SqlRunner.MySql/SqlRunner.MySql.csproj
             - name: Publish
               run: dotnet nuget push *.nupkg -s 'https://api.nuget.org/v3/index.json' -k ${{ secrets.NUGET_API_KEY }}  --skip-duplicate
