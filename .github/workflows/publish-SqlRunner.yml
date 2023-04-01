@@ -1,4 +1,4 @@
-name: publish nuget
+name: publish SqlRunner
 
 on: [workflow_dispatch]
 
