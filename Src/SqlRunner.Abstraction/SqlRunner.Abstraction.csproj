@@ -6,16 +6,27 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Version>1.0.0</Version>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>SqlScriptRunner.Abstraction</PackageId>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>SqlScriptRunner.Abstraction</Title>
+        <Authors>Karol Kaźmierczak</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/kaaziuu/SqlScriptRunner</RepositoryUrl>
+        <PackageTags>sql-runner script-runner database-first sql-script-runner</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" pack="true" PackagePath="\" />
+    </ItemGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\SqlRunner.Core\SqlRunner.Core.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <InternalsVisibleTo Include="UnitTests" />
-        <InternalsVisibleTo Include="SqlRunner" />
-        <InternalsVisibleTo Include="SqlRunner.Postgresql" />
-        <InternalsVisibleTo Include="SqlRunner.MySql" />
-        <InternalsVisibleTo Include="SqlRunner.Mssql" />
-    </ItemGroup>
-
 </Project>

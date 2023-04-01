@@ -33,7 +33,6 @@ public class SqlScriptRunnerTest
     [InlineData(null, "test", "name")]
     [InlineData("connString", null, "name")]
     [InlineData("connString", "test", "")]
-    [InlineData("connString", "test", "name")]
     public void ScriptRunner_WhenInvalidSetupModel_ThenThrowException(string connectionString, string folderPath,
         string deployScriptsTableName)
     {

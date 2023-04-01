@@ -5,9 +5,9 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>SqlScriptRunner</PackageId>
+        <PackageId>SqlScriptRunner.PostgreSQL</PackageId>
         <PackageVersion>1.0.0</PackageVersion>
-        <Title>SqlScriptRunner</Title>
+        <Title>SqlScriptRunner.PostgreSQL</Title>
         <Authors>Karol Kaźmierczak</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>

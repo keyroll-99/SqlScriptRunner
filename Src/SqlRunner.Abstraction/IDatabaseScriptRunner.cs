@@ -1,12 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using SqlRunner.Core.Models;
+﻿using SqlRunner.Core.Models;
 using SqlRunner.Core.ValueObject;
 
-// this is necessary for mock it in unit tests
-[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 namespace SqlRunner.Abstraction;
 
-internal interface IDatabaseScriptRunner
+public interface IDatabaseScriptRunner
 { 
     Task InitConnectionAsync();
     Task CloseConnectionAsync();

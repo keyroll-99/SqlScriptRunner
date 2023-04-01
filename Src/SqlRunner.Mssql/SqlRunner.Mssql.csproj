@@ -4,9 +4,9 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>SqlScriptRunner</PackageId>
+        <PackageId>SqlScriptRunner.MSSql</PackageId>
         <PackageVersion>1.0.0</PackageVersion>
-        <Title>SqlScriptRunner</Title>
+        <Title>SqlScriptRunner.MSSql</Title>
         <Authors>Karol Kaźmierczak</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>
@@ -14,17 +14,17 @@
         <PackageTags>sql-runner script-runner database-first sql-script-runner</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <None Include="..\..\README.md" pack="true" PackagePath="\" />
+        <None Include="..\..\README.md" pack="true" PackagePath="\"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <ProjectReference Include="..\SqlRunner\SqlRunner.csproj" />
+        <ProjectReference Include="..\SqlRunner\SqlRunner.csproj"/>
     </ItemGroup>
 
 </Project>

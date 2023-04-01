@@ -6,7 +6,7 @@ using SqlRunner.Core.ValueObject;
 
 namespace SqlRunner;
 
-internal class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
+public class ScriptRunner : IDisposable, IAsyncDisposable, IScriptRunner
 {
     private readonly SetupModel _setupModel;
     private readonly IDatabaseScriptRunner _databaseScriptRunner;

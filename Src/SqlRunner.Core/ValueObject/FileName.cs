@@ -1,6 +1,6 @@
 ﻿namespace SqlRunner.Core.ValueObject;
 
-internal class FileName
+public class FileName
 {
     public string Value { get; }
 
