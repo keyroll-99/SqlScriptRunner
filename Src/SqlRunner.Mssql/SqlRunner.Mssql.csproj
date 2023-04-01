@@ -4,9 +4,9 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>SqlScriptRunner</PackageId>
+        <PackageId>SqlScriptRunner.MSSql</PackageId>
         <PackageVersion>2.0.0</PackageVersion>
-        <Title>SqlScriptRunner</Title>
+        <Title>SqlScriptRunner.MSSql</Title>
         <Authors>Karol Kaźmierczak</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kaaziuu/SqlScriptRunner</PackageProjectUrl>
@@ -20,14 +20,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="UnitTests"/>
-        <InternalsVisibleTo Include="SqlRunner.Postgresql"/>
-        <InternalsVisibleTo Include="SqlRunner.MySql"/>
-        <InternalsVisibleTo Include="SqlRunner.Mssql"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SqlRunner.Abstraction\SqlRunner.Abstraction.csproj"/>
+        <ProjectReference Include="..\SqlRunner\SqlRunner.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="UnitTests" />
+        <InternalsVisibleTo Include="SqlRunner.Abstraction" />
+        <InternalsVisibleTo Include="SqlRunner" />
+        <InternalsVisibleTo Include="SqlRunner.Postgresql" />
+        <InternalsVisibleTo Include="SqlRunner.MySql" />
+        <InternalsVisibleTo Include="SqlRunner.Mssql" />
+    </ItemGroup>
+
+</Project>

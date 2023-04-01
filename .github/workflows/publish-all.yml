@@ -1,0 +1,11 @@
+name: publish SqlRunner all
+
+on: [workflow_dispatch]
+
+job:
+    call-all-publish:
+        uses: .github/workflows/publish-SqlRunner@master
+        uses: .github/workflows/publish-Abstraction@master
+        uses: .github/workflows/publish-Postgresql@master
+        uses: .github/workflows/publish-Mssql@master
+        uses: .github/workflows/publish-MySql@master
