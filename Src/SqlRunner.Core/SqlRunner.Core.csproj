@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>2.0.0</Version>
+        <Version>2.0.2</Version>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>SqlScriptRunner.Core</PackageId>
-        <PackageVersion>2.0.0</PackageVersion>
+        <PackageVersion>2.0.2</PackageVersion>
         <Title>SqlScriptRunner.Core</Title>
         <Authors>Karol Kaźmierczak</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
