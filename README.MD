@@ -16,7 +16,6 @@ From now the project will be separated into a few smaller packages. And now We d
 -   ConnectionString: Connection string to database,
 -   FolderPath: Path to root folder with sql script
 -   DeployScriptsTableName: Name of table where will be keep all deployed scripts
--   DataBaseType: Typeof database (Postgresql, Mssql, Mysql)
 -   InitFolderPath: Path to folder with init scripts (like create database or create schema)
 
 ## Example of use
